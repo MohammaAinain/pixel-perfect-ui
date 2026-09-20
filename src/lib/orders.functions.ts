@@ -47,7 +47,7 @@ export const placeOrder = createServerFn({ method: "POST" })
       }
     }
 
-    const { data: result, error } = await supabaseAdmin.rpc("place_order", {
+    const args = {
       _user_id: userId,
       _customer_name: data.customer_name,
       _customer_email: data.customer_email || null,
@@ -59,7 +59,9 @@ export const placeOrder = createServerFn({ method: "POST" })
       _pincode: data.pincode,
       _notes: data.notes || null,
       _items: data.items,
-    });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
+    const { data: result, error } = await supabaseAdmin.rpc("place_order", args);
 
     if (error) throw new Error(error.message);
     const r = result as unknown as PlacedOrder;
