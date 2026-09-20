@@ -109,13 +109,13 @@ export function Header() {
               </Link>
             ))}
             {isAdmin && (
-              <Link
-                to="/admin"
+              <a
+                href="/admin"
                 onClick={() => setOpen(false)}
                 className="py-3 text-sm font-bold uppercase tracking-[0.18em]"
               >
                 Admin
-              </Link>
+              </a>
             )}
             {user ? (
               <>
