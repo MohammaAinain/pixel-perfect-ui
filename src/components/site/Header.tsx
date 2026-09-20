@@ -54,12 +54,12 @@ export function Header() {
             </Link>
           ))}
           {isAdmin && (
-            <Link
-              to="/admin"
+            <a
+              href="/admin"
               className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
             >
               Admin
-            </Link>
+            </a>
           )}
         </nav>
 
