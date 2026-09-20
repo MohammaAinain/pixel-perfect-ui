@@ -6,9 +6,9 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { listCategories, listProducts } from "@/lib/catalog.functions";
 
 type ShopSearch = {
-  category?: string;
-  q?: string;
-  sort?: "new" | "price-asc" | "price-desc" | "name";
+  category?: string | undefined;
+  q?: string | undefined;
+  sort?: "new" | "price-asc" | "price-desc" | "name" | undefined;
 };
 
 const categoriesQuery = queryOptions({
