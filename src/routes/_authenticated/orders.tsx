@@ -7,13 +7,13 @@ import { formatINR } from "@/lib/shop";
 export const Route = createFileRoute("/_authenticated/orders")({
   head: () => ({
     meta: [
-      { title: "My Orders — Modish Clothing" },
+      { title: "My Orders — AVENUE NEST CLOTHING" },
       {
         name: "description",
-        content: "Track the status of every Modish Clothing order placed with your account.",
+        content: "Track the status of every AVENUE NEST CLOTHING order placed with your account.",
       },
-      { property: "og:title", content: "My Orders — Modish Clothing" },
-      { property: "og:description", content: "Track your Modish Clothing orders." },
+      { property: "og:title", content: "My Orders — AVENUE NEST CLOTHING" },
+      { property: "og:description", content: "Track your AVENUE NEST CLOTHING orders." },
     ],
   }),
   component: MyOrders,

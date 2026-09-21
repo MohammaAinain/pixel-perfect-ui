@@ -10,13 +10,13 @@ import { placeOrder } from "@/lib/orders.functions";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Checkout — Modish Clothing" },
+      { title: "Checkout — AVENUE NEST CLOTHING" },
       {
         name: "description",
         content:
-          "Enter your delivery details and place a cash-on-delivery order with Modish Clothing. No account required.",
+          "Enter your delivery details and place a cash-on-delivery order with AVENUE NEST CLOTHING. No account required.",
       },
-      { property: "og:title", content: "Checkout — Modish Clothing" },
+      { property: "og:title", content: "Checkout — AVENUE NEST CLOTHING" },
       { property: "og:description", content: "Cash on delivery checkout, no account required." },
     ],
   }),

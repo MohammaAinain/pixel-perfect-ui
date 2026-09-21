@@ -80,11 +80,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Modish Clothing — Premium Menswear" },
+      { title: "AVENUE NEST CLOTHING — Premium Menswear" },
       {
         name: "description",
         content:
-          "Modish Clothing: considered monochrome menswear. Shirts, tees, oversized tees, pants and jeans with cash on delivery across India.",
+          "AVENUE NEST CLOTHING: considered monochrome menswear. Shirts, tees, oversized tees, pants and jeans with cash on delivery across India.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -97,7 +97,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
   shellComponent: RootShell,

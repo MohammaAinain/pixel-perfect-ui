@@ -21,13 +21,13 @@ const categoriesQuery = queryOptions({
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Modish Clothing — Premium Menswear, Cash on Delivery" },
+      { title: "AVENUE NEST CLOTHING — Premium Menswear, Cash on Delivery" },
       {
         name: "description",
         content:
           "Monochrome menswear built to last: shirts, tees, oversized tees, pants and jeans. Free shipping over ₹1000, cash on delivery across India.",
       },
-      { property: "og:title", content: "Modish Clothing — Premium Menswear" },
+      { property: "og:title", content: "AVENUE NEST CLOTHING — Premium Menswear" },
       {
         property: "og:description",
         content: "Considered monochrome menswear. Free shipping over ₹1000, cash on delivery.",

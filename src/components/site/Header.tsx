@@ -5,6 +5,7 @@ import { Menu, ShoppingBag, User, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useIsAdmin } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
+import logoAsset from "@/assets/avenue-nest-mark.png.asset.json";
 
 const NAV = [
   { to: "/shop", label: "Shop" },
@@ -38,8 +39,11 @@ export function Header() {
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
 
-        <Link to="/" className="font-display text-lg font-extrabold uppercase tracking-[-0.04em]">
-          Modish<span className="text-muted-foreground"> Clothing</span>
+        <Link to="/" className="flex items-center gap-2.5" aria-label="AVENUE NEST CLOTHING home">
+          <img src={logoAsset.url} alt="" className="size-10 object-contain" />
+          <span className="font-display text-sm font-extrabold uppercase md:text-lg">
+            AVENUE NEST <span className="text-muted-foreground">CLOTHING</span>
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">

@@ -4,13 +4,13 @@ import { Layout } from "@/components/site/Layout";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Modish Clothing — Monochrome Menswear" },
+      { title: "About AVENUE NEST CLOTHING — Monochrome Menswear" },
       {
         name: "description",
         content:
-          "Modish Clothing makes small runs of monochrome menswear: strict palette, honest fabric, considered cuts. Here's how and why.",
+          "AVENUE NEST CLOTHING makes small runs of monochrome menswear: strict palette, honest fabric, considered cuts. Here's how and why.",
       },
-      { property: "og:title", content: "About Modish Clothing" },
+      { property: "og:title", content: "About AVENUE NEST CLOTHING" },
       {
         property: "og:description",
         content: "Small runs of monochrome menswear, made with a strict palette and honest fabric.",
@@ -28,7 +28,7 @@ function About() {
         <h1 className="mt-4 text-4xl md:text-6xl">Fewer things, better made</h1>
         <div className="mt-10 space-y-6 text-sm leading-relaxed text-muted-foreground md:text-base">
           <p>
-            Modish Clothing started with a simple frustration: most menswear is either
+            AVENUE NEST CLOTHING started with a simple frustration: most menswear is either
             disposable or needlessly loud. We wanted a wardrobe that stayed quiet and still felt
             deliberate — black, white, charcoal, and nothing that fights for attention.
           </p>

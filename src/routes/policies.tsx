@@ -4,13 +4,13 @@ import { Layout } from "@/components/site/Layout";
 export const Route = createFileRoute("/policies")({
   head: () => ({
     meta: [
-      { title: "Shipping, Returns & Privacy — Modish Clothing" },
+      { title: "Shipping, Returns & Privacy — AVENUE NEST CLOTHING" },
       {
         name: "description",
         content:
-          "Modish Clothing shipping charges, delivery times, the 7-day return window, cash-on-delivery terms and how we handle your data.",
+          "AVENUE NEST CLOTHING shipping charges, delivery times, the 7-day return window, cash-on-delivery terms and how we handle your data.",
       },
-      { property: "og:title", content: "Shipping, Returns & Privacy — Modish Clothing" },
+      { property: "og:title", content: "Shipping, Returns & Privacy — AVENUE NEST CLOTHING" },
       {
         property: "og:description",
         content: "Shipping rates, returns, cash-on-delivery terms and privacy.",
