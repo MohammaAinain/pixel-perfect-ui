@@ -21,18 +21,18 @@ export const Route = createFileRoute("/product/$slug")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: `${loaderData?.name ?? "Product"} — Modish Clothing` },
+      { title: `${loaderData?.name ?? "Product"} — AVENUE NEST CLOTHING` },
       {
         name: "description",
         content:
           loaderData?.description?.slice(0, 155) ??
-          "A considered monochrome menswear piece from Modish Clothing.",
+          "A considered monochrome menswear piece from AVENUE NEST CLOTHING.",
       },
-      { property: "og:title", content: `${loaderData?.name ?? "Product"} — Modish Clothing` },
+      { property: "og:title", content: `${loaderData?.name ?? "Product"} — AVENUE NEST CLOTHING` },
       {
         property: "og:description",
         content:
-          loaderData?.description?.slice(0, 155) ?? "Premium menswear from Modish Clothing.",
+          loaderData?.description?.slice(0, 155) ?? "Premium menswear from AVENUE NEST CLOTHING.",
       },
     ],
   }),

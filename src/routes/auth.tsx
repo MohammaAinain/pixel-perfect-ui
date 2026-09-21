@@ -8,13 +8,13 @@ import { useSession } from "@/hooks/use-session";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Login or Sign Up — Modish Clothing" },
+      { title: "Login or Sign Up — AVENUE NEST CLOTHING" },
       {
         name: "description",
         content:
-          "Sign in to track your Modish Clothing orders, or keep shopping as a guest — an account is always optional.",
+          "Sign in to track your AVENUE NEST CLOTHING orders, or keep shopping as a guest — an account is always optional.",
       },
-      { property: "og:title", content: "Login or Sign Up — Modish Clothing" },
+      { property: "og:title", content: "Login or Sign Up — AVENUE NEST CLOTHING" },
       { property: "og:description", content: "Track your orders. An account is always optional." },
     ],
   }),

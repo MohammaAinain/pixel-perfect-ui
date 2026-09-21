@@ -1,13 +1,17 @@
 import { Link } from "@tanstack/react-router";
+import logoAsset from "@/assets/avenue-nest-mark.png.asset.json";
 
 export function Footer() {
   return (
     <footer className="mt-24 border-t border-border bg-ink text-background">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-4 md:px-8">
         <div className="md:col-span-2">
-          <p className="font-display text-2xl font-extrabold uppercase tracking-[-0.04em]">
-            Modish Clothing
-          </p>
+          <div className="flex items-center gap-3">
+            <img src={logoAsset.url} alt="" className="size-12 object-contain invert" />
+            <p className="font-display text-2xl font-extrabold uppercase">
+              AVENUE NEST CLOTHING
+            </p>
+          </div>
           <p className="mt-3 max-w-sm text-sm text-background/60">
             Considered menswear in a strict monochrome palette. Made in small runs, shipped
             across India, paid for on delivery.
@@ -59,7 +63,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-background/10 px-5 py-6 text-center text-xs text-background/50 md:px-8">
-        &copy; {new Date().getFullYear()} Modish Clothing. Cash on delivery only.
+        &copy; {new Date().getFullYear()} AVENUE NEST CLOTHING. Cash on delivery only.
       </div>
     </footer>
   );
