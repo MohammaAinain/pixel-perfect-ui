@@ -5,7 +5,7 @@ import { Menu, ShoppingBag, User, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useIsAdmin } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
-import logoAsset from "@/assets/avenue-nest-mark.png.asset.json";
+const logoAsset = { url: "/img/avenue-nest-mark.png" };
 
 const NAV = [
   { to: "/shop", label: "Shop" },
