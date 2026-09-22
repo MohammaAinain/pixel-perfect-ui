@@ -3,7 +3,7 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { Layout } from "@/components/site/Layout";
 import { ProductCard } from "@/components/site/ProductCard";
 import { listCategories, listProducts } from "@/lib/catalog.functions";
-import heroAsset from "@/assets/mc-hero.jpg.asset.json";
+const heroAsset = { url: "/img/mc-hero.jpg" };
 
 const featuredQuery = queryOptions({
   queryKey: ["products", "featured"],
