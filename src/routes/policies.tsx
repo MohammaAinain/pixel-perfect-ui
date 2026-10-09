@@ -15,6 +15,8 @@ export const Route = createFileRoute("/policies")({
         property: "og:description",
         content: "Shipping rates, returns, cash-on-delivery terms and privacy.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Policies,

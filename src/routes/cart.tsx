@@ -14,6 +14,8 @@ export const Route = createFileRoute("/cart")({
       },
       { property: "og:title", content: "Your Bag — AVENUE NEST CLOTHING" },
       { property: "og:description", content: "Review your bag and check out with cash on delivery." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: CartPage,

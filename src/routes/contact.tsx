@@ -13,6 +13,8 @@ export const Route = createFileRoute("/contact")({
       },
       { property: "og:title", content: "Contact AVENUE NEST CLOTHING" },
       { property: "og:description", content: "Reach us about sizing, orders and returns." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Contact,

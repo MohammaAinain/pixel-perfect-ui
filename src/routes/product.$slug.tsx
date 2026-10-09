@@ -34,6 +34,8 @@ export const Route = createFileRoute("/product/$slug")({
         content:
           loaderData?.description?.slice(0, 155) ?? "Premium menswear from AVENUE NEST CLOTHING.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ProductPage,

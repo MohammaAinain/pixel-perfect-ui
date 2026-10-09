@@ -50,6 +50,8 @@ export const Route = createFileRoute("/shop")({
         property: "og:description",
         content: "Shirts, tees, oversized tees, pants and jeans in a strict monochrome palette.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   loaderDeps: ({ search }) => search,

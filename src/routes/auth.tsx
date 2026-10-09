@@ -16,6 +16,8 @@ export const Route = createFileRoute("/auth")({
       },
       { property: "og:title", content: "Login or Sign Up — AVENUE NEST CLOTHING" },
       { property: "og:description", content: "Track your orders. An account is always optional." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AuthPage,

@@ -26,6 +26,8 @@ export const Route = createFileRoute("/order-success")({
       },
       { property: "og:title", content: "Order Confirmed — AVENUE NEST CLOTHING" },
       { property: "og:description", content: "Your cash-on-delivery order is confirmed." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: OrderSuccess,
