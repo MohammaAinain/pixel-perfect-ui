@@ -14,6 +14,8 @@ export const Route = createFileRoute("/_authenticated/orders")({
       },
       { property: "og:title", content: "My Orders — AVENUE NEST CLOTHING" },
       { property: "og:description", content: "Track your AVENUE NEST CLOTHING orders." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: MyOrders,

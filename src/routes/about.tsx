@@ -15,6 +15,8 @@ export const Route = createFileRoute("/about")({
         property: "og:description",
         content: "Small runs of monochrome menswear, made with a strict palette and honest fabric.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: About,

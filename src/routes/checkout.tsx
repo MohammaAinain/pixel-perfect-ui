@@ -18,6 +18,8 @@ export const Route = createFileRoute("/checkout")({
       },
       { property: "og:title", content: "Checkout — AVENUE NEST CLOTHING" },
       { property: "og:description", content: "Cash on delivery checkout, no account required." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Checkout,
