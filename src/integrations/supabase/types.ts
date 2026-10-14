@@ -381,10 +381,10 @@ export type Database = {
     }
     Functions: {
       admin_update_order_status: {
-        Args: { _order_id: string; _status: string }
+        Args: { _admin_user_id: string; _order_id: string; _status: string }
         Returns: Json
       }
-      get_admin_analytics: { Args: never; Returns: Json }
+      get_admin_analytics: { Args: { _admin_user_id: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
