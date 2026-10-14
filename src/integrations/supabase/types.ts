@@ -47,6 +47,45 @@ export type Database = {
         }
         Relationships: []
       }
+      homepage_content: {
+        Row: {
+          active: boolean
+          body: string
+          button_href: string
+          button_label: string
+          created_at: string
+          eyebrow: string
+          headline: string
+          id: string
+          image_path: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          body: string
+          button_href: string
+          button_label: string
+          created_at?: string
+          eyebrow: string
+          headline: string
+          id?: string
+          image_path: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          body?: string
+          button_href?: string
+          button_label?: string
+          created_at?: string
+          eyebrow?: string
+          headline?: string
+          id?: string
+          image_path?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -211,6 +250,7 @@ export type Database = {
           sku: string | null
           slug: string
           stock: number
+          stock_by_size: Json
           updated_at: string
         }
         Insert: {
@@ -230,6 +270,7 @@ export type Database = {
           sku?: string | null
           slug: string
           stock?: number
+          stock_by_size?: Json
           updated_at?: string
         }
         Update: {
@@ -249,6 +290,7 @@ export type Database = {
           sku?: string | null
           slug?: string
           stock?: number
+          stock_by_size?: Json
           updated_at?: string
         }
         Relationships: [
@@ -288,6 +330,30 @@ export type Database = {
         }
         Relationships: []
       }
+      store_settings: {
+        Row: {
+          created_at: string
+          id: string
+          low_stock_threshold: number
+          store_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          low_stock_threshold?: number
+          store_name?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          low_stock_threshold?: number
+          store_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -314,6 +380,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_update_order_status: {
+        Args: { _order_id: string; _status: string }
+        Returns: Json
+      }
+      get_admin_analytics: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
