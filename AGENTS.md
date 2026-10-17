@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep admin data operations in `src/lib/admin.functions.ts`: verify the authenticated user’s `has_role` result before loading the service-role client, and call them only from the authenticated admin route. This keeps elevated access behind a server-enforced role check.
