@@ -13,6 +13,7 @@ export type CatalogProduct = {
   sale_price: number | null;
   sizes: string[];
   stock: number;
+  stock_by_size: Record<string, number>;
   sku: string | null;
   featured: boolean;
   bestseller: boolean;
@@ -46,14 +47,22 @@ function publicClient() {
 }
 
 const SELECT =
-  "id,name,slug,description,price,discount_percent,sale_price,sizes,stock,sku,featured,bestseller,new_arrival,created_at,categories(name,slug),product_images(image_path,display_order)";
+  "id,name,slug,description,price,discount_percent,sale_price,sizes,stock,stock_by_size,sku,featured,bestseller,new_arrival,created_at,categories(name,slug),product_images(image_path,display_order)";
+
+async function signedImageUrls(paths: string[]) {
+  const privatePaths = [...new Set(paths.filter((path) => path && !path.startsWith("/") && !/^https?:\/\//i.test(path)))];
+  if (!privatePaths.length) return new Map<string, string>();
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data } = await supabaseAdmin.storage.from("product-images").createSignedUrls(privatePaths, 3600);
+  return new Map((data ?? []).flatMap((item) => item.path && item.signedUrl ? [[item.path, item.signedUrl] as const] : []));
+}
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-function shape(row: any): CatalogProduct {
+function shape(row: any, signedUrls: Map<string, string>): CatalogProduct {
   const images = (row.product_images ?? [])
     .slice()
     .sort((a: any, b: any) => a.display_order - b.display_order)
-    .map((i: any) => i.image_path as string);
+    .map((i: any) => signedUrls.get(i.image_path) ?? i.image_path as string);
   return {
     id: row.id,
     name: row.name,
@@ -64,6 +73,7 @@ function shape(row: any): CatalogProduct {
     sale_price: row.sale_price === null ? null : Number(row.sale_price),
     sizes: row.sizes ?? [],
     stock: row.stock,
+    stock_by_size: row.stock_by_size ?? {},
     sku: row.sku,
     featured: row.featured,
     bestseller: row.bestseller,
@@ -80,7 +90,9 @@ export const listCategories = createServerFn({ method: "GET" }).handler(async ()
     .eq("active", true)
     .order("display_order");
   if (error) throw new Error(error.message);
-  return (data ?? []) as CatalogCategory[];
+  const rows = data ?? [];
+  const signed = await signedImageUrls(rows.flatMap((row) => row.image ? [row.image] : []));
+  return rows.map((row) => ({ ...row, image: row.image ? signed.get(row.image) ?? row.image : null })) as CatalogCategory[];
 });
 
 export const listProducts = createServerFn({ method: "GET" })
@@ -116,7 +128,9 @@ export const listProducts = createServerFn({ method: "GET" })
 
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
-    return (rows ?? []).map(shape);
+    const products = rows ?? [];
+    const signed = await signedImageUrls(products.flatMap((row) => (row.product_images ?? []).map((image) => image.image_path)));
+    return products.map((row) => shape(row, signed));
   });
 
 export const getProductBySlug = createServerFn({ method: "GET" })
@@ -129,5 +143,19 @@ export const getProductBySlug = createServerFn({ method: "GET" })
       .eq("active", true)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    return row ? shape(row) : null;
+    if (!row) return null;
+    const signed = await signedImageUrls((row.product_images ?? []).map((image) => image.image_path));
+    return shape(row, signed);
   });
+
+export const getHomepageBanner = createServerFn({ method: "GET" }).handler(async () => {
+  const { data, error } = await publicClient().from("homepage_content")
+    .select("image_path,eyebrow,headline,body,button_label,button_href")
+    .eq("id", "primary")
+    .eq("active", true)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+  const signed = await signedImageUrls([data.image_path]);
+  return { ...data, image_url: signed.get(data.image_path) ?? data.image_path };
+});
