@@ -80,12 +80,12 @@ function Home() {
                 {banner?.body ?? "A strict black, white and charcoal wardrobe for men who prefer fewer, better pieces. Cut clean, finished properly, delivered to your door."}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link
+                <a
                   href={banner?.button_href ?? "/shop"}
                   className="bg-background px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-foreground transition-opacity hover:opacity-85"
                 >
                   {banner?.button_label ?? "Shop the edit"}
-                </Link>
+                </a>
                 <Link
                   to="/about"
                   className="border border-background px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-background transition-colors hover:bg-background hover:text-foreground"
