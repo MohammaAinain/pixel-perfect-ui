@@ -19,6 +19,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as OrderSuccessRouteImport } from './routes/order-success'
 import { Route as PoliciesRouteImport } from './routes/policies'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 
@@ -71,6 +72,11 @@ const ShopRoute = ShopRouteImport.update({
   path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/order-success': typeof OrderSuccessRoute
   '/policies': typeof PoliciesRoute
   '/shop': typeof ShopRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/orders': typeof AuthenticatedOrdersRoute
   '/product/$slug': typeof ProductSlugRoute
 }
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/order-success': typeof OrderSuccessRoute
   '/policies': typeof PoliciesRoute
   '/shop': typeof ShopRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/orders': typeof AuthenticatedOrdersRoute
   '/product/$slug': typeof ProductSlugRoute
 }
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/order-success': typeof OrderSuccessRoute
   '/policies': typeof PoliciesRoute
   '/shop': typeof ShopRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/product/$slug': typeof ProductSlugRoute
 }
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/order-success'
     | '/policies'
     | '/shop'
+    | '/admin'
     | '/orders'
     | '/product/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/order-success'
     | '/policies'
     | '/shop'
+    | '/admin'
     | '/orders'
     | '/product/$slug'
   id:
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/order-success'
     | '/policies'
     | '/shop'
+    | '/_authenticated/admin'
     | '/_authenticated/orders'
     | '/product/$slug'
   fileRoutesById: FileRoutesById
@@ -252,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/orders': {
       id: '/_authenticated/orders'
       path: '/orders'
@@ -270,10 +289,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
 }
 
