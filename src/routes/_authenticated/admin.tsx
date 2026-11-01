@@ -305,7 +305,41 @@ function CategoriesSection({ rows, loading, draft, setDraft, refresh }: { rows: 
 
 function CustomersSection({ rows, loading, error }: { rows: Awaited<ReturnType<typeof getAdminCustomers>>; loading: boolean; error: Error | null }) {
   const [expanded, setExpanded] = useState<string | null>(null);
-  return <><PageIntro eyebrow="Customer accounts" title="Customers" action={<p className="text-sm text-muted-foreground">{rows.length} registered profiles</p>} />{loading ? <LoadingLine /> : error ? <ErrorLine message={error.message} /> : <div className="border border-border bg-card"><TableWrap><table className="w-full min-w-[760px] text-left text-sm"><thead className="border-b border-border text-[11px] uppercase tracking-[0.12em] text-muted-foreground"><tr><th className="px-4 py-3">Customer</th><th className="px-4 py-3">Phone</th><th className="px-4 py-3">Joined</th><th className="px-4 py-3">Orders</th><th className="px-4 py-3">History</th></tr></thead><tbody className="divide-y divide-border">{rows.map((customer) => <><tr key={customer.user_id}><td className="px-4 py-3"><p className="font-semibold">{customer.name || "Customer"}</p><p className="mt-1 text-xs text-muted-foreground">{customer.email || "Email unavailable"}</p></td><td className="px-4 py-3">{customer.phone || "—"}</td><td className="px-4 py-3 text-muted-foreground">{dateLabel(customer.created_at)}</td><td className="px-4 py-3">{customer.orders.length}</td><td className="px-4 py-3"><Button variant="outline" size="sm" onClick={() => setExpanded(expanded === customer.user_id ? null : customer.user_id)}>{expanded === customer.user_id ? "Hide" : "View orders"}</Button></td></tr>{expanded === customer.user_id && <tr key={`${customer.user_id}-history`}><td colSpan={5} className="bg-muted/30 px-5 py-4">{customer.orders.length ? <ul className="space-y-2">{customer.orders.map((order) => <li key={order.id} className="flex flex-wrap justify-between gap-2 text-xs"><span>{order.order_number} · {dateLabel(order.created_at)} · {order.status}</span><strong>{money(order.total)}</strong></li>)}</ul> : <p className="text-xs text-muted-foreground">No order history for this customer.</p>}</td></tr>}</>)}</tbody></table>{rows.length === 0 && <EmptyTable>No registered customers yet.</EmptyTable>}</div>}</>;
+  return (
+    <>
+      <PageIntro eyebrow="Customer accounts" title="Customers" action={<p className="text-sm text-muted-foreground">{rows.length} registered profiles</p>} />
+      {loading ? <LoadingLine /> : error ? <ErrorLine message={error.message} /> : (
+        <div className="border border-border bg-card">
+          <TableWrap>
+            <table className="w-full min-w-[760px] text-left text-sm">
+              <thead className="border-b border-border text-[11px] uppercase tracking-[0.12em] text-muted-foreground"><tr><th className="px-4 py-3">Customer</th><th className="px-4 py-3">Phone</th><th className="px-4 py-3">Joined</th><th className="px-4 py-3">Orders</th><th className="px-4 py-3">History</th></tr></thead>
+              <tbody className="divide-y divide-border">
+                {rows.map((customer) => (
+                  <CustomerRows key={customer.user_id} customer={customer} expanded={expanded === customer.user_id} onToggle={() => setExpanded(expanded === customer.user_id ? null : customer.user_id)} />
+                ))}
+              </tbody>
+            </table>
+          </TableWrap>
+          {rows.length === 0 && <EmptyTable>No registered customers yet.</EmptyTable>}
+        </div>
+      )}
+    </>
+  );
+}
+
+function CustomerRows({ customer, expanded, onToggle }: { customer: Awaited<ReturnType<typeof getAdminCustomers>>[number]; expanded: boolean; onToggle: () => void }) {
+  return (
+    <>
+      <tr>
+        <td className="px-4 py-3"><p className="font-semibold">{customer.name || "Customer"}</p><p className="mt-1 text-xs text-muted-foreground">{customer.email || "Email unavailable"}</p></td>
+        <td className="px-4 py-3">{customer.phone || "—"}</td>
+        <td className="px-4 py-3 text-muted-foreground">{dateLabel(customer.created_at)}</td>
+        <td className="px-4 py-3">{customer.orders.length}</td>
+        <td className="px-4 py-3"><Button variant="outline" size="sm" onClick={onToggle}>{expanded ? "Hide" : "View orders"}</Button></td>
+      </tr>
+      {expanded && <tr><td colSpan={5} className="bg-muted/30 px-5 py-4">{customer.orders.length ? <ul className="space-y-2">{customer.orders.map((order) => <li key={order.id} className="flex flex-wrap justify-between gap-2 text-xs"><span>{order.order_number} · {dateLabel(order.created_at)} · {order.status}</span><strong>{money(order.total)}</strong></li>)}</ul> : <p className="text-xs text-muted-foreground">No order history for this customer.</p>}</td></tr>}
+    </>
+  );
 }
 
 function AnalyticsSection({ analytics, loading, error }: { analytics?: unknown; loading: boolean; error: Error | null }) {
