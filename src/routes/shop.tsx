@@ -39,13 +39,13 @@ export const Route = createFileRoute("/shop")({
   }),
   head: () => ({
     meta: [
-      { title: "Shop All Menswear — AVENUE NEST CLOTHING" },
+      { title: "Shop All Menswear — Avenuenest Clothing" },
       {
         name: "description",
         content:
-          "Browse every AVENUE NEST CLOTHING piece: shirts, t-shirts, oversized t-shirts, pants and jeans. Filter by category, search and sort by price.",
+          "Browse every Avenuenest Clothing piece: shirts, t-shirts, oversized t-shirts, pants and jeans. Filter by category, search and sort by price.",
       },
-      { property: "og:title", content: "Shop All Menswear — AVENUE NEST CLOTHING" },
+      { property: "og:title", content: "Shop All Menswear — Avenuenest Clothing" },
       {
         property: "og:description",
         content: "Shirts, tees, oversized tees, pants and jeans in a strict monochrome palette.",

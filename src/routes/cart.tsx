@@ -7,12 +7,12 @@ import { FREE_SHIPPING_THRESHOLD, formatINR } from "@/lib/shop";
 export const Route = createFileRoute("/cart")({
   head: () => ({
     meta: [
-      { title: "Your Bag — AVENUE NEST CLOTHING" },
+      { title: "Your Bag — Avenuenest Clothing" },
       {
         name: "description",
-        content: "Review the pieces in your AVENUE NEST CLOTHING bag before checking out with cash on delivery.",
+        content: "Review the pieces in your Avenuenest Clothing bag before checking out with cash on delivery.",
       },
-      { property: "og:title", content: "Your Bag — AVENUE NEST CLOTHING" },
+      { property: "og:title", content: "Your Bag — Avenuenest Clothing" },
       { property: "og:description", content: "Review your bag and check out with cash on delivery." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
