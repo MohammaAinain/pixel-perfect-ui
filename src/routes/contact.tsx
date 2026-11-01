@@ -5,13 +5,13 @@ import { Layout } from "@/components/site/Layout";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact AVENUE NEST CLOTHING" },
+      { title: "Contact Avenuenest Clothing" },
       {
         name: "description",
         content:
-          "Questions about sizing, an order or a return? Send AVENUE NEST CLOTHING a message and we'll reply within one working day.",
+          "Questions about sizing, an order or a return? Send Avenuenest Clothing a message and we'll reply within one working day.",
       },
-      { property: "og:title", content: "Contact AVENUE NEST CLOTHING" },
+      { property: "og:title", content: "Contact Avenuenest Clothing" },
       { property: "og:description", content: "Reach us about sizing, orders and returns." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

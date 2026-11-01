@@ -91,7 +91,7 @@ function AdminPage() {
   const categories = useQuery({ queryKey: ["admin", "categories"], queryFn: () => categoriesFn() });
   const orders = useQuery({ queryKey: ["admin", "orders"], queryFn: () => ordersFn() });
   const customers = useQuery({ queryKey: ["admin", "customers"], queryFn: () => customersFn(), enabled: section === "customers" });
-  const content = useQuery({ queryKey: ["admin", "content"], queryFn: () => contentFn(), enabled: section === "website" || section === "settings" });
+  const content = useQuery({ queryKey: ["admin", "content"], queryFn: () => contentFn(), enabled: section === "website" || section === "settings" || section === "inventory" });
   const [productDraft, setProductDraft] = useState<ProductDraft | null>(null);
   const [categoryDraft, setCategoryDraft] = useState<CategoryDraft | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
@@ -102,7 +102,7 @@ function AdminPage() {
     await queryClient.invalidateQueries({ queryKey: ["categories"] });
   };
 
-  const current = sections.find((item) => item.id === section) ?? sections[0];
+  const current = sections.find((item) => item.id === section) ?? { id: "overview" as const, label: "Overview", icon: LayoutDashboard };
   const chooseSection = (id: Section) => { setSection(id); setMobileNav(false); setProductDraft(null); setCategoryDraft(null); };
 
   return (
@@ -154,16 +154,16 @@ function Metric({ title, value, detail, icon: Icon }: { title: string; value: Re
   return <article className="border border-border bg-card p-5"><div className="flex items-start justify-between gap-3"><p className="text-sm text-muted-foreground">{title}</p><Icon className="size-4 text-muted-foreground" /></div><p className="mt-6 text-3xl font-bold tabular-nums">{value}</p><p className="mt-2 text-xs text-muted-foreground">{detail}</p></article>;
 }
 
-function OverviewSection({ data, loading, error, onNavigate }: { data?: Awaited<ReturnType<typeof getAdminOverview>>; loading: boolean; error: Error | null; onNavigate: (section: Section) => void }) {
+function OverviewSection({ data, loading, error, onNavigate }: { data?: Awaited<ReturnType<typeof getAdminOverview>> | undefined; loading: boolean; error: Error | null; onNavigate: (section: Section) => void }) {
   const analytics = data?.analytics as Record<string, unknown> | null | undefined;
   return <>
     <PageIntro eyebrow="Avenuenest Clothing" title="Store overview" action={<Button variant="outline" onClick={() => onNavigate("orders")}><ShoppingCart /> Review orders</Button>} />
     {loading ? <LoadingLine /> : error ? <ErrorLine message={error.message} /> : <>
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4 xl:gap-4">
-        <Metric title="All orders" value={String(analytics?.order_count ?? 0)} detail={`${analytics?.pending_orders ?? 0} awaiting action`} icon={ShoppingCart} />
-        <Metric title="Net sales" value={money(analytics?.sales_total)} detail="Excludes cancelled orders" icon={Activity} />
-        <Metric title="Active products" value={String(analytics?.active_product_count ?? 0)} detail={`${analytics?.product_count ?? 0} products total`} icon={Package} />
-        <Metric title="Low stock" value={String(analytics?.low_stock_count ?? 0)} detail="At or below your alert level" icon={Boxes} />
+        <Metric title="All orders" value={String(analytics?.["order_count"] ?? 0)} detail={`${analytics?.["pending_orders"] ?? 0} awaiting action`} icon={ShoppingCart} />
+        <Metric title="Net sales" value={money(analytics?.["sales_total"])} detail="Excludes cancelled orders" icon={Activity} />
+        <Metric title="Active products" value={String(analytics?.["active_product_count"] ?? 0)} detail={`${analytics?.["product_count"] ?? 0} products total`} icon={Package} />
+        <Metric title="Low stock" value={String(analytics?.["low_stock_count"] ?? 0)} detail="At or below your alert level" icon={Boxes} />
       </div>
       <div className="mt-8 border border-border bg-card">
         <div className="flex items-center justify-between border-b border-border px-5 py-4"><div><p className="eyebrow">Latest activity</p><h3 className="mt-1 text-lg normal-case tracking-normal">Recent orders</h3></div><Button variant="outline" size="sm" onClick={() => onNavigate("orders")}>All orders</Button></div>
@@ -249,7 +249,12 @@ function ProductEditor({ draft, setDraft, categories, busy, onSubmit, onCancel }
         uploaded.push(path);
       }
       update("images", [...draft.images, ...uploaded]);
-      setPreviews((prev) => [...prev, ...uploaded.map((path) => supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl)]);
+      const previewUrls = await Promise.all(uploaded.map(async (path) => {
+        const { data, error } = await supabase.storage.from("product-images").createSignedUrl(path, 3600);
+        if (error) throw new Error(error.message);
+        return data.signedUrl;
+      }));
+      setPreviews((prev) => [...prev, ...previewUrls]);
       toast.success(`${uploaded.length} image${uploaded.length === 1 ? "" : "s"} uploaded`);
     } catch (reason) { toast.error(reason instanceof Error ? reason.message : "Image upload failed"); }
     finally { setUploading(false); }
@@ -305,18 +310,52 @@ function CategoriesSection({ rows, loading, draft, setDraft, refresh }: { rows: 
 
 function CustomersSection({ rows, loading, error }: { rows: Awaited<ReturnType<typeof getAdminCustomers>>; loading: boolean; error: Error | null }) {
   const [expanded, setExpanded] = useState<string | null>(null);
-  return <><PageIntro eyebrow="Customer accounts" title="Customers" action={<p className="text-sm text-muted-foreground">{rows.length} registered profiles</p>} />{loading ? <LoadingLine /> : error ? <ErrorLine message={error.message} /> : <div className="border border-border bg-card"><TableWrap><table className="w-full min-w-[760px] text-left text-sm"><thead className="border-b border-border text-[11px] uppercase tracking-[0.12em] text-muted-foreground"><tr><th className="px-4 py-3">Customer</th><th className="px-4 py-3">Phone</th><th className="px-4 py-3">Joined</th><th className="px-4 py-3">Orders</th><th className="px-4 py-3">History</th></tr></thead><tbody className="divide-y divide-border">{rows.map((customer) => <><tr key={customer.user_id}><td className="px-4 py-3"><p className="font-semibold">{customer.name || "Customer"}</p><p className="mt-1 text-xs text-muted-foreground">{customer.email || "Email unavailable"}</p></td><td className="px-4 py-3">{customer.phone || "—"}</td><td className="px-4 py-3 text-muted-foreground">{dateLabel(customer.created_at)}</td><td className="px-4 py-3">{customer.orders.length}</td><td className="px-4 py-3"><Button variant="outline" size="sm" onClick={() => setExpanded(expanded === customer.user_id ? null : customer.user_id)}>{expanded === customer.user_id ? "Hide" : "View orders"}</Button></td></tr>{expanded === customer.user_id && <tr key={`${customer.user_id}-history`}><td colSpan={5} className="bg-muted/30 px-5 py-4">{customer.orders.length ? <ul className="space-y-2">{customer.orders.map((order) => <li key={order.id} className="flex flex-wrap justify-between gap-2 text-xs"><span>{order.order_number} · {dateLabel(order.created_at)} · {order.status}</span><strong>{money(order.total)}</strong></li>)}</ul> : <p className="text-xs text-muted-foreground">No order history for this customer.</p>}</td></tr>}</>)}</tbody></table>{rows.length === 0 && <EmptyTable>No registered customers yet.</EmptyTable>}</div>}</>;
+  return (
+    <>
+      <PageIntro eyebrow="Customer accounts" title="Customers" action={<p className="text-sm text-muted-foreground">{rows.length} registered profiles</p>} />
+      {loading ? <LoadingLine /> : error ? <ErrorLine message={error.message} /> : (
+        <div className="border border-border bg-card">
+          <TableWrap>
+            <table className="w-full min-w-[760px] text-left text-sm">
+              <thead className="border-b border-border text-[11px] uppercase tracking-[0.12em] text-muted-foreground"><tr><th className="px-4 py-3">Customer</th><th className="px-4 py-3">Phone</th><th className="px-4 py-3">Joined</th><th className="px-4 py-3">Orders</th><th className="px-4 py-3">History</th></tr></thead>
+              <tbody className="divide-y divide-border">
+                {rows.map((customer) => (
+                  <CustomerRows key={customer.user_id} customer={customer} expanded={expanded === customer.user_id} onToggle={() => setExpanded(expanded === customer.user_id ? null : customer.user_id)} />
+                ))}
+              </tbody>
+            </table>
+          </TableWrap>
+          {rows.length === 0 && <EmptyTable>No registered customers yet.</EmptyTable>}
+        </div>
+      )}
+    </>
+  );
+}
+
+function CustomerRows({ customer, expanded, onToggle }: { customer: Awaited<ReturnType<typeof getAdminCustomers>>[number]; expanded: boolean; onToggle: () => void }) {
+  return (
+    <>
+      <tr>
+        <td className="px-4 py-3"><p className="font-semibold">{customer.name || "Customer"}</p><p className="mt-1 text-xs text-muted-foreground">{customer.email || "Email unavailable"}</p></td>
+        <td className="px-4 py-3">{customer.phone || "—"}</td>
+        <td className="px-4 py-3 text-muted-foreground">{dateLabel(customer.created_at)}</td>
+        <td className="px-4 py-3">{customer.orders.length}</td>
+        <td className="px-4 py-3"><Button variant="outline" size="sm" onClick={onToggle}>{expanded ? "Hide" : "View orders"}</Button></td>
+      </tr>
+      {expanded && <tr><td colSpan={5} className="bg-muted/30 px-5 py-4">{customer.orders.length ? <ul className="space-y-2">{customer.orders.map((order) => <li key={order.id} className="flex flex-wrap justify-between gap-2 text-xs"><span>{order.order_number} · {dateLabel(order.created_at)} · {order.status}</span><strong>{money(order.total)}</strong></li>)}</ul> : <p className="text-xs text-muted-foreground">No order history for this customer.</p>}</td></tr>}
+    </>
+  );
 }
 
 function AnalyticsSection({ analytics, loading, error }: { analytics?: unknown; loading: boolean; error: Error | null }) {
   const data = analytics as Record<string, unknown> | null | undefined;
-  const days = (Array.isArray(data?.sales_by_day) ? data.sales_by_day : []) as { date: string; sales: number; orders: number }[];
-  const top = (Array.isArray(data?.top_products) ? data.top_products : []) as { product_id: string | null; name: string; units_sold: number; revenue: number }[];
+  const days = (Array.isArray(data?.["sales_by_day"]) ? data["sales_by_day"] : []) as { date: string; sales: number; orders: number }[];
+  const top = (Array.isArray(data?.["top_products"]) ? data["top_products"] : []) as { product_id: string | null; name: string; units_sold: number; revenue: number }[];
   const peak = Math.max(1, ...days.map((day) => Number(day.sales)));
-  return <><PageIntro eyebrow="Store performance" title="Analytics" action={<span className="text-xs text-muted-foreground">Last 30 days</span>} />{loading ? <LoadingLine /> : error ? <ErrorLine message={error.message} /> : <><div className="grid grid-cols-2 gap-3 xl:grid-cols-4"><Metric title="Gross orders" value={String(data?.order_count ?? 0)} detail={`${data?.pending_orders ?? 0} pending`} icon={ShoppingCart} /><Metric title="Sales" value={money(data?.sales_total)} detail="Completed and open orders" icon={Activity} /><Metric title="Active products" value={String(data?.active_product_count ?? 0)} detail="Available to customers" icon={Package} /><Metric title="Low stock" value={String(data?.low_stock_count ?? 0)} detail="Needs a restock review" icon={Boxes} /></div><section className="mt-6 border border-border bg-card p-5 md:p-7"><div className="flex items-center justify-between"><div><p className="eyebrow">Daily revenue</p><h3 className="mt-1 text-lg normal-case tracking-normal">30-day sales</h3></div><span className="text-xs text-muted-foreground">{days.length} days</span></div><div className="mt-7 flex h-52 items-end gap-1.5 border-b border-border sm:gap-2">{days.map((day) => <div key={day.date} className="group relative flex h-full min-w-0 flex-1 items-end" title={`${dateLabel(day.date)} · ${money(day.sales)} · ${day.orders} orders`}><div className="w-full bg-foreground/75 transition-colors group-hover:bg-foreground" style={{ height: `${Math.max(2, (Number(day.sales) / peak) * 100)}%` }} /></div>)}</div><div className="mt-2 flex justify-between text-[10px] text-muted-foreground"><span>{days[0] ? dateLabel(days[0].date) : ""}</span><span>{days.length ? dateLabel(days[days.length - 1].date) : ""}</span></div></section><section className="mt-6 border border-border bg-card"><div className="border-b border-border px-5 py-4"><p className="eyebrow">Best performing</p><h3 className="mt-1 text-lg normal-case tracking-normal">Top products</h3></div>{top.length ? <TableWrap><table className="w-full min-w-[520px] text-left text-sm"><thead className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground"><tr><th className="px-5 py-3">Product</th><th className="px-5 py-3">Units sold</th><th className="px-5 py-3">Revenue</th></tr></thead><tbody className="divide-y divide-border">{top.map((product, index) => <tr key={product.product_id ?? `${product.name}-${index}`}><td className="px-5 py-3 font-semibold">{product.name}</td><td className="px-5 py-3">{product.units_sold}</td><td className="px-5 py-3">{money(product.revenue)}</td></tr>)}</tbody></table></TableWrap> : <EmptyTable>Sales and product rankings will appear when orders are placed.</EmptyTable>}</section></>}</>;
+  return <><PageIntro eyebrow="Store performance" title="Analytics" action={<span className="text-xs text-muted-foreground">Last 30 days</span>} />{loading ? <LoadingLine /> : error ? <ErrorLine message={error.message} /> : <><div className="grid grid-cols-2 gap-3 xl:grid-cols-4"><Metric title="Gross orders" value={String(data?.["order_count"] ?? 0)} detail={`${data?.["pending_orders"] ?? 0} pending`} icon={ShoppingCart} /><Metric title="Sales" value={money(data?.["sales_total"])} detail="Completed and open orders" icon={Activity} /><Metric title="Active products" value={String(data?.["active_product_count"] ?? 0)} detail="Available to customers" icon={Package} /><Metric title="Low stock" value={String(data?.["low_stock_count"] ?? 0)} detail="Needs a restock review" icon={Boxes} /></div><section className="mt-6 border border-border bg-card p-5 md:p-7"><div className="flex items-center justify-between"><div><p className="eyebrow">Daily revenue</p><h3 className="mt-1 text-lg normal-case tracking-normal">30-day sales</h3></div><span className="text-xs text-muted-foreground">{days.length} days</span></div><div className="mt-7 flex h-52 items-end gap-1.5 border-b border-border sm:gap-2">{days.map((day) => <div key={day.date} className="group relative flex h-full min-w-0 flex-1 items-end" title={`${dateLabel(day.date)} · ${money(day.sales)} · ${day.orders} orders`}><div className="w-full bg-foreground/75 transition-colors group-hover:bg-foreground" style={{ height: `${Math.max(2, (Number(day.sales) / peak) * 100)}%` }} /></div>)}</div><div className="mt-2 flex justify-between text-[10px] text-muted-foreground"><span>{days[0] ? dateLabel(days[0].date) : ""}</span><span>{days.length ? dateLabel(days[days.length - 1].date) : ""}</span></div></section><section className="mt-6 border border-border bg-card"><div className="border-b border-border px-5 py-4"><p className="eyebrow">Best performing</p><h3 className="mt-1 text-lg normal-case tracking-normal">Top products</h3></div>{top.length ? <TableWrap><table className="w-full min-w-[520px] text-left text-sm"><thead className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground"><tr><th className="px-5 py-3">Product</th><th className="px-5 py-3">Units sold</th><th className="px-5 py-3">Revenue</th></tr></thead><tbody className="divide-y divide-border">{top.map((product, index) => <tr key={product.product_id ?? `${product.name}-${index}`}><td className="px-5 py-3 font-semibold">{product.name}</td><td className="px-5 py-3">{product.units_sold}</td><td className="px-5 py-3">{money(product.revenue)}</td></tr>)}</tbody></table></TableWrap> : <EmptyTable>Sales and product rankings will appear when orders are placed.</EmptyTable>}</section></>}</>;
 }
 
-function WebsiteSection({ value, loading, refresh }: { value?: HomepageSettings; loading: boolean; refresh: () => Promise<void> }) {
+function WebsiteSection({ value, loading, refresh }: { value?: HomepageSettings | undefined; loading: boolean; refresh: () => Promise<void> }) {
   const save = useServerFn(saveAdminHomepage); const [busy, setBusy] = useState(false); const homepage = value?.homepage;
   const [draft, setDraft] = useState({ eyebrow: "", headline: "", body: "", image_path: "", button_label: "", button_href: "/shop", active: true });
   useEffect(() => { if (homepage) setDraft({ eyebrow: homepage.eyebrow, headline: homepage.headline, body: homepage.body, image_path: homepage.image_path, button_label: homepage.button_label, button_href: homepage.button_href, active: homepage.active }); }, [homepage]);
@@ -325,7 +364,7 @@ function WebsiteSection({ value, loading, refresh }: { value?: HomepageSettings;
   return <><PageIntro eyebrow="Storefront" title="Website content" />{loading ? <LoadingLine /> : <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]"><form onSubmit={(event) => void submit(event)} className="space-y-5 border border-border bg-card p-5 md:p-7"><div><p className="eyebrow">Homepage banner</p><p className="mt-1 text-sm text-muted-foreground">The published home page reads these banner details.</p></div><Field label="Eyebrow"><Input value={draft.eyebrow} onChange={(e) => setDraft({ ...draft, eyebrow: e.target.value })} /></Field><Field label="Headline"><Input required value={draft.headline} onChange={(e) => setDraft({ ...draft, headline: e.target.value })} /></Field><Field label="Description"><Textarea rows={4} value={draft.body} onChange={(e) => setDraft({ ...draft, body: e.target.value })} /></Field><Field label="Button label"><Input required value={draft.button_label} onChange={(e) => setDraft({ ...draft, button_label: e.target.value })} /></Field><Field label="Button destination"><Input required value={draft.button_href} onChange={(e) => setDraft({ ...draft, button_href: e.target.value })} /></Field><Field label="Banner image path"><Input required value={draft.image_path} onChange={(e) => setDraft({ ...draft, image_path: e.target.value })} /></Field><label className="flex items-center gap-2 text-sm"><Checkbox checked={draft.active} onCheckedChange={(checked) => setDraft({ ...draft, active: checked === true })} />Publish banner</label><div><Label className="eyebrow">Upload replacement banner</Label><Input className="mt-2" type="file" accept="image/*" onChange={(e) => void upload(e.target.files?.[0])} /></div><Button disabled={busy}>{busy ? "Saving…" : "Save banner"}</Button></form><aside className="border border-border bg-card p-5"><p className="eyebrow">Preview</p>{(value?.homepage?.imageUrl ?? draft.image_path) && <div className="mt-4 aspect-[4/5] overflow-hidden bg-muted md:aspect-[4/3]"><img src={draft.image_path === homepage?.image_path ? homepage?.imageUrl ?? draft.image_path : draft.image_path.startsWith("/") || draft.image_path.startsWith("http") ? draft.image_path : supabase.storage.from("product-images").getPublicUrl(draft.image_path).data.publicUrl} alt="Banner preview" className="size-full object-cover" /></div>}<p className="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">{draft.eyebrow}</p><p className="mt-1 text-xl font-extrabold uppercase">{draft.headline}</p><p className="mt-2 text-sm text-muted-foreground">{draft.body}</p></aside></div>}</>;
 }
 
-function SettingsSection({ value, loading, refresh }: { value?: HomepageSettings; loading: boolean; refresh: () => Promise<void> }) {
+function SettingsSection({ value, loading, refresh }: { value?: HomepageSettings | undefined; loading: boolean; refresh: () => Promise<void> }) {
   const save = useServerFn(saveAdminSettings); const [busy, setBusy] = useState(false); const [name, setName] = useState(""); const [threshold, setThreshold] = useState("5");
   useEffect(() => { if (value?.settings) { setName(value.settings.store_name); setThreshold(String(value.settings.low_stock_threshold)); } }, [value?.settings]);
   async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setBusy(true); try { await save({ data: { store_name: name, low_stock_threshold: Number(threshold) } }); toast.success("Store settings saved"); await refresh(); } catch (reason) { toast.error(reason instanceof Error ? reason.message : "Could not save settings"); } finally { setBusy(false); } }

@@ -7,13 +7,13 @@ import { formatINR } from "@/lib/shop";
 export const Route = createFileRoute("/_authenticated/orders")({
   head: () => ({
     meta: [
-      { title: "My Orders — AVENUE NEST CLOTHING" },
+      { title: "My Orders — Avenuenest Clothing" },
       {
         name: "description",
-        content: "Track the status of every AVENUE NEST CLOTHING order placed with your account.",
+        content: "Track the status of every Avenuenest Clothing order placed with your account.",
       },
-      { property: "og:title", content: "My Orders — AVENUE NEST CLOTHING" },
-      { property: "og:description", content: "Track your AVENUE NEST CLOTHING orders." },
+      { property: "og:title", content: "My Orders — Avenuenest Clothing" },
+      { property: "og:description", content: "Track your Avenuenest Clothing orders." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

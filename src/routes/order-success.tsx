@@ -19,12 +19,12 @@ export const Route = createFileRoute("/order-success")({
   }),
   head: () => ({
     meta: [
-      { title: "Order Confirmed — AVENUE NEST CLOTHING" },
+      { title: "Order Confirmed — Avenuenest Clothing" },
       {
         name: "description",
-        content: "Your AVENUE NEST CLOTHING order is confirmed. Pay in cash when it arrives.",
+        content: "Your Avenuenest Clothing order is confirmed. Pay in cash when it arrives.",
       },
-      { property: "og:title", content: "Order Confirmed — AVENUE NEST CLOTHING" },
+      { property: "og:title", content: "Order Confirmed — Avenuenest Clothing" },
       { property: "og:description", content: "Your cash-on-delivery order is confirmed." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
