@@ -39,10 +39,10 @@ export function Header() {
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
 
-        <Link to="/" className="flex items-center gap-2.5" aria-label="AVENUE NEST CLOTHING home">
+        <Link to="/" className="flex items-center gap-2.5" aria-label="Avenuenest Clothing home">
           <img src={logoAsset.url} alt="" className="size-10 object-contain" />
           <span className="font-display text-sm font-extrabold uppercase md:text-lg">
-            AVENUE NEST <span className="text-muted-foreground">CLOTHING</span>
+            Avenuenest <span className="text-muted-foreground">Clothing</span>
           </span>
         </Link>
 
@@ -58,12 +58,12 @@ export function Header() {
             </Link>
           ))}
           {isAdmin && (
-            <a
-              href="/admin"
+            <Link
+              to="/admin"
               className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
             >
               Admin
-            </a>
+            </Link>
           )}
         </nav>
 
@@ -113,13 +113,13 @@ export function Header() {
               </Link>
             ))}
             {isAdmin && (
-              <a
-                href="/admin"
+              <Link
+                to="/admin"
                 onClick={() => setOpen(false)}
                 className="py-3 text-sm font-bold uppercase tracking-[0.18em]"
               >
                 Admin
-              </a>
+              </Link>
             )}
             {user ? (
               <>

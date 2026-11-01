@@ -74,6 +74,13 @@ function ProductPage() {
   const price = effectivePrice(product);
   const onSale = product.sale_price !== null && product.sale_price < product.price;
   const soldOut = product.stock <= 0;
+  const sizeStock = (selectedSize: string | null) => {
+    if (!selectedSize) return product.stock;
+    return Object.keys(product.stock_by_size).length
+      ? product.stock_by_size[selectedSize] ?? 0
+      : product.stock;
+  };
+  const selectedStock = sizeStock(size);
 
   function addToCart() {
     if (!product) return;
@@ -89,7 +96,7 @@ function ProductPage() {
       size,
       quantity: qty,
       image: product.images[0] ?? null,
-      maxStock: product.stock,
+      maxStock: selectedStock,
     });
     toast.success(`${product.name} added to bag`);
   }
@@ -164,6 +171,7 @@ function ProductPage() {
                   {product.sizes.map((s) => (
                     <button
                       key={s}
+                      disabled={sizeStock(s) <= 0}
                       onClick={() => setSize(s)}
                       className={`min-w-14 border px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] transition-colors ${
                         size === s
@@ -171,7 +179,7 @@ function ProductPage() {
                           : "border-border hover:border-ink"
                       }`}
                     >
-                      {s}
+                      {s}{sizeStock(s) <= 0 ? " · Sold out" : ""}
                     </button>
                   ))}
                 </div>
@@ -190,7 +198,7 @@ function ProductPage() {
                 <span className="w-10 text-center text-sm font-semibold">{qty}</span>
                 <button
                   className="px-4 py-3 text-sm"
-                  onClick={() => setQty((q) => Math.min(product.stock || 1, q + 1))}
+                  onClick={() => setQty((q) => Math.min(selectedStock || 1, q + 1))}
                   aria-label="Increase quantity"
                 >
                   +
@@ -199,14 +207,16 @@ function ProductPage() {
               <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
                 {soldOut
                   ? "Out of stock"
-                  : product.stock <= 5
-                    ? `Only ${product.stock} left`
+                  : product.sizes.length > 0 && !size
+                    ? "Choose a size"
+                    : selectedStock <= 5
+                      ? `Only ${selectedStock} left`
                     : "In stock"}
               </span>
             </div>
 
             <button
-              disabled={soldOut}
+              disabled={soldOut || (product.sizes.length > 0 && (!size || selectedStock <= 0))}
               onClick={addToCart}
               className="mt-8 w-full bg-ink px-8 py-5 text-xs font-bold uppercase tracking-[0.2em] text-background transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40"
             >

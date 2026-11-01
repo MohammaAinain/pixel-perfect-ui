@@ -8,9 +8,7 @@ export function Footer() {
         <div className="md:col-span-2">
           <div className="flex items-center gap-3">
             <img src={logoAsset.url} alt="" className="size-12 object-contain invert" />
-            <p className="font-display text-2xl font-extrabold uppercase">
-              AVENUE NEST CLOTHING
-            </p>
+            <p className="font-display text-2xl font-extrabold">Avenuenest Clothing</p>
           </div>
           <p className="mt-3 max-w-sm text-sm text-background/60">
             Considered menswear in a strict monochrome palette. Made in small runs, shipped
@@ -63,7 +61,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-background/10 px-5 py-6 text-center text-xs text-background/50 md:px-8">
-        &copy; {new Date().getFullYear()} AVENUE NEST CLOTHING. Cash on delivery only.
+        &copy; {new Date().getFullYear()} Avenuenest Clothing. Cash on delivery only.
       </div>
     </footer>
   );

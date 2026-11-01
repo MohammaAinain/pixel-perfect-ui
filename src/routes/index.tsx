@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { Layout } from "@/components/site/Layout";
 import { ProductCard } from "@/components/site/ProductCard";
-import { listCategories, listProducts } from "@/lib/catalog.functions";
+import { getHomepageBanner, listCategories, listProducts } from "@/lib/catalog.functions";
 import campaignBanner from "@/assets/avenue-nest-campaign-banner.jpg";
 
 const featuredQuery = queryOptions({
@@ -16,6 +16,10 @@ const newQuery = queryOptions({
 const categoriesQuery = queryOptions({
   queryKey: ["categories"],
   queryFn: () => listCategories(),
+});
+const homepageBannerQuery = queryOptions({
+  queryKey: ["homepage-banner"],
+  queryFn: () => getHomepageBanner(),
 });
 
 export const Route = createFileRoute("/")({
@@ -50,13 +54,15 @@ function Home() {
   const { data: featured } = useSuspenseQuery(featuredQuery);
   const { data: arrivals } = useSuspenseQuery(newQuery);
   const { data: categories } = useSuspenseQuery(categoriesQuery);
+  const { data: banner } = useQuery(homepageBannerQuery);
+  const bannerImage = banner?.image_url ?? campaignBanner;
 
   return (
     <Layout>
       <section className="mx-auto max-w-7xl md:px-8">
         <div className="relative aspect-[4/5] min-h-[500px] overflow-hidden bg-ink md:aspect-[1.95] md:min-h-[500px]">
           <img
-            src={campaignBanner}
+            src={bannerImage}
             alt="Model in a black layered outfit on a city street"
             width={1920}
             height={1024}
@@ -66,22 +72,19 @@ function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/75 via-foreground/30 to-transparent" />
           <div className="relative z-10 flex min-h-[500px] items-end px-5 py-12 md:items-center md:px-12 md:py-16">
             <div className="fade-up max-w-xl">
-              <p className="eyebrow text-background/75">Autumn Edit — 2026</p>
+              <p className="eyebrow text-background/75">{banner?.eyebrow ?? "Autumn Edit — 2026"}</p>
               <h1 className="mt-5 text-5xl font-black uppercase leading-[0.92] tracking-normal text-background md:text-7xl">
-                Dressed
-                <br />
-                in shadow
+                {banner?.headline ?? <>Dressed<br />in shadow</>}
               </h1>
               <p className="mt-6 max-w-md text-sm leading-relaxed text-background/80 md:text-base">
-                A strict black, white and charcoal wardrobe for men who prefer fewer, better
-                pieces. Cut clean, finished properly, delivered to your door.
+                {banner?.body ?? "A strict black, white and charcoal wardrobe for men who prefer fewer, better pieces. Cut clean, finished properly, delivered to your door."}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
-                  to="/shop"
+                  href={banner?.button_href ?? "/shop"}
                   className="bg-background px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-foreground transition-opacity hover:opacity-85"
                 >
-                  Shop the edit
+                  {banner?.button_label ?? "Shop the edit"}
                 </Link>
                 <Link
                   to="/about"
