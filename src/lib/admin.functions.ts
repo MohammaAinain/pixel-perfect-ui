@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { signStoreImageUrls } from "@/lib/store-images.server";
 
 type AdminContext = {
   supabase: SupabaseClient<Database>;
@@ -17,13 +18,6 @@ async function requireAdmin(context: AdminContext) {
   if (error || data !== true) throw new Error("Administrator access required");
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin;
-}
-
-async function signedImageUrls(client: Awaited<ReturnType<typeof requireAdmin>>, paths: string[]) {
-  const privatePaths = [...new Set(paths.filter((path) => path && !path.startsWith("/") && !/^https?:\/\//i.test(path)))];
-  if (!privatePaths.length) return new Map<string, string>();
-  const { data } = await client.storage.from("product-images").createSignedUrls(privatePaths, 3600);
-  return new Map((data ?? []).flatMap((item) => item.path && item.signedUrl ? [[item.path, item.signedUrl] as const] : []));
 }
 
 export const verifyAdmin = createServerFn({ method: "GET" })
@@ -60,7 +54,7 @@ export const getAdminProducts = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     const rows = data ?? [];
     const paths = rows.flatMap((row) => (row.product_images ?? []).map((image) => image.image_path));
-    const signed = await signedImageUrls(db, paths);
+    const signed = await signStoreImageUrls(paths);
     return rows.map((row) => {
       const images = [...(row.product_images ?? [])].sort((a, b) => a.display_order - b.display_order);
       return {
@@ -81,7 +75,7 @@ export const getAdminCategories = createServerFn({ method: "GET" })
       .order("display_order");
     if (error) throw new Error(error.message);
     const rows = data ?? [];
-    const signed = await signedImageUrls(db, rows.flatMap((row) => row.image ? [row.image] : []));
+    const signed = await signStoreImageUrls(rows.flatMap((row) => row.image ? [row.image] : []));
     return rows.map((row) => ({ ...row, imageUrl: row.image ? signed.get(row.image) ?? row.image : null }));
   });
 
@@ -292,6 +286,6 @@ export const getAdminHomepageAndSettings = createServerFn({ method: "GET" })
     if (homepageError) throw new Error(homepageError.message);
     if (settingsError) throw new Error(settingsError.message);
     const path = homepage?.image_path;
-    const signed = path ? await signedImageUrls(db, [path]) : new Map<string, string>();
+    const signed = path ? await signStoreImageUrls([path]) : new Map<string, string>();
     return { homepage: homepage ? { ...homepage, imageUrl: signed.get(path ?? "") ?? path } : null, settings };
   });
