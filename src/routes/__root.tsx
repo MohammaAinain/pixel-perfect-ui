@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { lazy, useEffect, type ReactNode } from "react";
 
@@ -37,12 +38,13 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  console.error(error);
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
+  const errorObject = error instanceof Error ? error : new Error(String(error));
+  console.error(errorObject);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
+    reportLovableError(errorObject, { boundary: "tanstack_root_error_component" });
+  }, [errorObject]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -75,7 +77,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-const LazyErrorComponent = lazy(() => Promise.resolve({ default: ErrorComponent }));
+const LazyErrorComponent = lazy(async () => ({
+  default: function LazyRootErrorComponent(props: ErrorComponentProps) {
+    return <ErrorComponent {...props} />;
+  },
+}));
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
