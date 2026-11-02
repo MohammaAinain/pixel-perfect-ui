@@ -30,7 +30,7 @@ type HomepageSettings = Awaited<ReturnType<typeof getAdminHomepageAndSettings>>;
 type ProductDraft = {
   id?: string; name: string; slug: string; description: string; category_id: string;
   price: string; discount_percent: string; sizes: string; stock: string; stock_by_size: string;
-  sku: string; featured: boolean; bestseller: boolean; new_arrival: boolean; active: boolean; images: string[];
+  sku: string; featured: boolean; bestseller: boolean; new_arrival: boolean; active: boolean; images: string[]; imageUrls: string[];
 };
 type CategoryDraft = { id?: string; name: string; slug: string; image: string; active: boolean; display_order: string };
 
@@ -49,7 +49,7 @@ const sections: { id: Section; label: string; icon: typeof LayoutDashboard }[] =
 const blankProduct = (): ProductDraft => ({
   name: "", slug: "", description: "", category_id: "", price: "", discount_percent: "0",
   sizes: "", stock: "0", stock_by_size: "", sku: "", featured: false, bestseller: false,
-  new_arrival: false, active: true, images: [],
+  new_arrival: false, active: true, images: [], imageUrls: [],
 });
 const blankCategory = (): CategoryDraft => ({ name: "", slug: "", image: "", active: true, display_order: "0" });
 const slugify = (value: string) => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -228,7 +228,7 @@ function ProductsSection({ rows, categories, loading, error, draft, setDraft, re
 }
 
 function toProductDraft(row: Product): ProductDraft {
-  return { id: row.id, name: row.name, slug: row.slug, description: row.description ?? "", category_id: row.category_id ?? "", price: String(row.price), discount_percent: String(row.discount_percent), sizes: row.sizes.join(", "), stock: String(row.stock), stock_by_size: Object.entries(row.stock_by_size ?? {}).map(([size, qty]) => `${size}:${qty}`).join(", "), sku: row.sku ?? "", featured: row.featured, bestseller: row.bestseller, new_arrival: row.new_arrival, active: row.active, images: row.images };
+  return { id: row.id, name: row.name, slug: row.slug, description: row.description ?? "", category_id: row.category_id ?? "", price: String(row.price), discount_percent: String(row.discount_percent), sizes: row.sizes.join(", "), stock: String(row.stock), stock_by_size: Object.entries(row.stock_by_size ?? {}).map(([size, qty]) => `${size}:${qty}`).join(", "), sku: row.sku ?? "", featured: row.featured, bestseller: row.bestseller, new_arrival: row.new_arrival, active: row.active, images: row.images, imageUrls: row.imageUrls };
 }
 
 function ProductEditor({ draft, setDraft, categories, busy, onSubmit, onCancel }: { draft: ProductDraft; setDraft: (value: ProductDraft | null) => void; categories: Category[]; busy: boolean; onSubmit: (event: FormEvent<HTMLFormElement>) => void; onCancel: () => void }) {
@@ -248,12 +248,12 @@ function ProductEditor({ draft, setDraft, categories, busy, onSubmit, onCancel }
         if (error) throw new Error(error.message);
         uploaded.push(path);
       }
-      update("images", [...draft.images, ...uploaded]);
       const previewUrls = await Promise.all(uploaded.map(async (path) => {
         const { data, error } = await supabase.storage.from("product-images").createSignedUrl(path, 3600);
         if (error) throw new Error(error.message);
         return data.signedUrl;
       }));
+      setDraft({ ...draft, images: [...draft.images, ...uploaded], imageUrls: [...draft.imageUrls, ...previewUrls] });
       setPreviews((prev) => [...prev, ...previewUrls]);
       toast.success(`${uploaded.length} image${uploaded.length === 1 ? "" : "s"} uploaded`);
     } catch (reason) { toast.error(reason instanceof Error ? reason.message : "Image upload failed"); }
@@ -272,7 +272,7 @@ function ProductEditor({ draft, setDraft, categories, busy, onSubmit, onCancel }
       <Field label="Total stock (used when size stock is blank)"><Input type="number" min="0" step="1" value={draft.stock} onChange={(e) => update("stock", e.target.value)} /></Field>
       <div className="grid content-center grid-cols-2 gap-3">{([["active", "Active"], ["featured", "Featured"], ["bestseller", "Bestseller"], ["new_arrival", "New arrival"]] as const).map(([key, label]) => <label key={key} className="flex items-center gap-2 text-sm"><Checkbox checked={draft[key]} onCheckedChange={(checked) => update(key, checked === true)} />{label}</label>)}</div>
       <div className="md:col-span-2"><Field label="Description"><Textarea rows={4} value={draft.description} onChange={(e) => update("description", e.target.value)} /></Field></div>
-      <div className="md:col-span-2"><Label className="eyebrow">Product images</Label><div className="mt-2 flex flex-wrap gap-2">{draft.images.map((path, index) => { const rowUrl = path.startsWith("/") ? path : path.startsWith("http") ? path : previews[draft.images.slice(0, index).filter((entry) => !entry.startsWith("/") && !entry.startsWith("http")).length] ?? ""; return <div key={`${path}-${index}`} className="relative size-20 overflow-hidden bg-muted">{rowUrl ? <img src={rowUrl} alt="Product preview" className="size-full object-cover" /> : <span className="grid size-full place-items-center text-[9px] text-muted-foreground">Saved image</span>}<Button variant="destructive" size="icon" aria-label="Remove image" className="absolute right-0 top-0 size-6" onClick={() => update("images", draft.images.filter((_, itemIndex) => itemIndex !== index))}><X className="size-3" /></Button></div>})}<label className="grid size-20 cursor-pointer place-items-center border border-dashed border-border text-muted-foreground hover:bg-muted" aria-label="Upload product images"><ImagePlus className="size-5" /><input type="file" accept="image/*" multiple className="sr-only" disabled={uploading} onChange={(e) => { void upload(e.target.files); e.currentTarget.value = ""; }} /></label></div><p className="mt-2 text-xs text-muted-foreground">{uploading ? "Uploading images…" : "Upload multiple image files. Each file can be up to 10 MB."}</p></div>
+      <div className="md:col-span-2"><Label className="eyebrow">Product images</Label><div className="mt-2 flex flex-wrap gap-2">{draft.images.map((path, index) => { const rowUrl = path.startsWith("/") || path.startsWith("http") ? path : draft.imageUrls[index] ?? previews[index] ?? ""; return <div key={`${path}-${index}`} className="relative size-20 overflow-hidden bg-muted">{rowUrl ? <img src={rowUrl} alt="Product preview" className="size-full object-cover" /> : <span className="grid size-full place-items-center text-[9px] text-muted-foreground">Saved image</span>}<Button variant="destructive" size="icon" aria-label="Remove image" className="absolute right-0 top-0 size-6" onClick={() => setDraft({ ...draft, images: draft.images.filter((_, itemIndex) => itemIndex !== index), imageUrls: draft.imageUrls.filter((_, itemIndex) => itemIndex !== index) })}><X className="size-3" /></Button></div>})}<label className="grid size-20 cursor-pointer place-items-center border border-dashed border-border text-muted-foreground hover:bg-muted" aria-label="Upload product images"><ImagePlus className="size-5" /><input type="file" accept="image/*" multiple className="sr-only" disabled={uploading} onChange={(e) => { void upload(e.target.files); e.currentTarget.value = ""; }} /></label></div><p className="mt-2 text-xs text-muted-foreground">{uploading ? "Uploading images…" : "Upload multiple image files. Each file can be up to 10 MB."}</p></div>
       <div className="flex justify-end gap-2 pt-2 md:col-span-2"><Button variant="outline" type="button" onClick={onCancel}>Cancel</Button><Button disabled={busy || uploading} type="submit">{busy ? "Saving…" : draft.id ? "Save changes" : "Create product"}</Button></div>
     </form>
   </section>;
