@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
+import { signStoreImageUrls } from "@/lib/store-images.server";
 
 export type CatalogProduct = {
   id: string;
@@ -49,14 +50,6 @@ function publicClient() {
 const SELECT =
   "id,name,slug,description,price,discount_percent,sale_price,sizes,stock,stock_by_size,sku,featured,bestseller,new_arrival,created_at,categories(name,slug),product_images(image_path,display_order)";
 
-async function signedImageUrls(paths: string[]) {
-  const privatePaths = [...new Set(paths.filter((path) => path && !path.startsWith("/") && !/^https?:\/\//i.test(path)))];
-  if (!privatePaths.length) return new Map<string, string>();
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data } = await supabaseAdmin.storage.from("product-images").createSignedUrls(privatePaths, 3600);
-  return new Map((data ?? []).flatMap((item) => item.path && item.signedUrl ? [[item.path, item.signedUrl] as const] : []));
-}
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function shape(row: any, signedUrls: Map<string, string>): CatalogProduct {
   const images = (row.product_images ?? [])
@@ -91,7 +84,7 @@ export const listCategories = createServerFn({ method: "GET" }).handler(async ()
     .order("display_order");
   if (error) throw new Error(error.message);
   const rows = data ?? [];
-  const signed = await signedImageUrls(rows.flatMap((row) => row.image ? [row.image] : []));
+  const signed = await signStoreImageUrls(rows.flatMap((row) => row.image ? [row.image] : []));
   return rows.map((row) => ({ ...row, image: row.image ? signed.get(row.image) ?? row.image : null })) as CatalogCategory[];
 });
 
@@ -129,7 +122,7 @@ export const listProducts = createServerFn({ method: "GET" })
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
     const products = rows ?? [];
-    const signed = await signedImageUrls(products.flatMap((row) => (row.product_images ?? []).map((image) => image.image_path)));
+    const signed = await signStoreImageUrls(products.flatMap((row) => (row.product_images ?? []).map((image) => image.image_path)));
     return products.map((row) => shape(row, signed));
   });
 
@@ -144,7 +137,7 @@ export const getProductBySlug = createServerFn({ method: "GET" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!row) return null;
-    const signed = await signedImageUrls((row.product_images ?? []).map((image) => image.image_path));
+    const signed = await signStoreImageUrls((row.product_images ?? []).map((image) => image.image_path));
     return shape(row, signed);
   });
 
@@ -156,6 +149,6 @@ export const getHomepageBanner = createServerFn({ method: "GET" }).handler(async
     .maybeSingle();
   if (error) throw new Error(error.message);
   if (!data) return null;
-  const signed = await signedImageUrls([data.image_path]);
+  const signed = await signStoreImageUrls([data.image_path]);
   return { ...data, image_url: signed.get(data.image_path) ?? data.image_path };
 });

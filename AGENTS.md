@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep admin data operations in `src/lib/admin.functions.ts`: verify the authenticated user’s `has_role` result before loading the service-role client, and call them only from the authenticated admin route. This keeps elevated access behind a server-enforced role check.
+- Put privileged Storage URL signing in a `*.server.ts` helper and call it only from server-function handlers after database visibility is established, so private imagery stays behind scoped server access.

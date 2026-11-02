@@ -172,8 +172,8 @@ function ProductPage() {
                     <button
                       key={s}
                       disabled={sizeStock(s) <= 0}
-                      onClick={() => setSize(s)}
-                      className={`min-w-14 border px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] transition-colors ${
+                      onClick={() => { setSize(s); setQty(1); }}
+                      className={`min-w-14 border px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                         size === s
                           ? "border-ink bg-ink text-background"
                           : "border-border hover:border-ink"
