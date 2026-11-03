@@ -289,3 +289,12 @@ export const getAdminHomepageAndSettings = createServerFn({ method: "GET" })
     const signed = path ? await signStoreImageUrls([path]) : new Map<string, string>();
     return { homepage: homepage ? { ...homepage, imageUrl: signed.get(path ?? "") ?? path } : null, settings };
   });
+
+export const getAdminImagePreviews = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ paths: z.array(z.string().min(1).max(500)).max(20) }).parse(input))
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context);
+    const signed = await signStoreImageUrls(data.paths);
+    return data.paths.map((path) => ({ path, url: signed.get(path) ?? path }));
+  });
