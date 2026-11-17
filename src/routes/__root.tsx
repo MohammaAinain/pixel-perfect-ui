@@ -88,11 +88,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Avenuenest Clothing — Premium Menswear" },
+      { title: "Fusion Fabric — Premium Menswear" },
       {
         name: "description",
         content:
-          "Avenuenest Clothing: considered monochrome menswear. Shirts, tees, oversized tees, pants and jeans with cash on delivery across India.",
+          "Fusion Fabric: considered monochrome menswear. Shirts, tees, oversized tees, pants and jeans with cash on delivery across India.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

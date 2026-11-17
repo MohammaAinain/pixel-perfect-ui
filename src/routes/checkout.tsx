@@ -10,13 +10,13 @@ import { placeOrder } from "@/lib/orders.functions";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Checkout — Avenuenest Clothing" },
+      { title: "Checkout — Fusion Fabric" },
       {
         name: "description",
         content:
-          "Enter your delivery details and place a cash-on-delivery order with Avenuenest Clothing. No account required.",
+          "Enter your delivery details and place a cash-on-delivery order with Fusion Fabric. No account required.",
       },
-      { property: "og:title", content: "Checkout — Avenuenest Clothing" },
+      { property: "og:title", content: "Checkout — Fusion Fabric" },
       { property: "og:description", content: "Cash on delivery checkout, no account required." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

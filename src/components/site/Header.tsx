@@ -39,10 +39,10 @@ export function Header() {
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
 
-        <Link to="/" className="flex items-center gap-2.5" aria-label="Avenuenest Clothing home">
+        <Link to="/" className="flex items-center gap-2.5" aria-label="Fusion Fabric home">
           <img src={logoAsset.url} alt="" className="size-10 object-contain" />
           <span className="font-display text-sm font-extrabold uppercase md:text-lg">
-            Avenuenest <span className="text-muted-foreground">Clothing</span>
+            Fusion <span className="text-muted-foreground">Fabric</span>
           </span>
         </Link>
 

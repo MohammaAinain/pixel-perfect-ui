@@ -59,9 +59,9 @@ const dateLabel = (value: string) => new Date(value).toLocaleDateString("en-IN",
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Store Admin — Avenuenest Clothing" },
+      { title: "Store Admin — Fusion Fabric" },
       { name: "description", content: "Manage products, inventory, orders and store content." },
-      { property: "og:title", content: "Store Admin — Avenuenest Clothing" },
+      { property: "og:title", content: "Store Admin — Fusion Fabric" },
       { property: "og:description", content: "Manage store operations and website content." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -110,7 +110,7 @@ function AdminPage() {
       <aside className="hidden min-h-screen border-r border-border bg-ink text-background lg:flex lg:flex-col">
         <div className="flex h-20 items-center gap-3 border-b border-background/10 px-6">
           <img src="/img/avenue-nest-mark.png" alt="" className="size-9 object-contain invert" />
-          <div><p className="text-xs font-extrabold uppercase">Avenuenest</p><p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-background/50">Store admin</p></div>
+          <div><p className="text-xs font-extrabold uppercase">Fusion Fabric</p><p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-background/50">Store admin</p></div>
         </div>
         <nav aria-label="Admin sections" className="flex-1 space-y-1 px-3 py-5">
           {sections.map((item) => <NavButton key={item.id} item={item} active={section === item.id} onClick={() => chooseSection(item.id)} dark />)}
@@ -119,10 +119,10 @@ function AdminPage() {
       </aside>
       <div className="min-w-0">
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur md:px-8">
-          <div className="flex items-center gap-3"><Button variant="outline" size="icon" className="lg:hidden" aria-label="Open admin menu" onClick={() => setMobileNav(!mobileNav)}><LayoutDashboard /></Button><div><p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Avenuenest Clothing</p><h1 className="mt-0.5 text-lg font-bold normal-case tracking-normal">{current.label}</h1></div></div>
+          <div className="flex items-center gap-3"><Button variant="outline" size="icon" className="lg:hidden" aria-label="Open admin menu" onClick={() => setMobileNav(!mobileNav)}><LayoutDashboard /></Button><div><p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Fusion Fabric</p><h1 className="mt-0.5 text-lg font-bold normal-case tracking-normal">{current.label}</h1></div></div>
           <Link to="/" aria-label="View storefront" className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground"><span className="hidden sm:inline">View store</span><ChevronRight className="size-4" /></Link>
         </header>
-        {mobileNav && <div className="fixed inset-0 z-40 bg-foreground/30 lg:hidden" onClick={() => setMobileNav(false)}><nav aria-label="Admin sections" className="h-full w-[min(84vw,320px)] bg-ink p-4 text-background" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-center justify-between"><span className="text-sm font-bold uppercase">Avenuenest admin</span><Button variant="ghost" size="icon" aria-label="Close admin menu" onClick={() => setMobileNav(false)}><X /></Button></div>{sections.map((item) => <NavButton key={item.id} item={item} active={section === item.id} onClick={() => chooseSection(item.id)} dark />)}<Link to="/" className="mt-6 block px-3 py-3 text-xs uppercase">Back to store</Link></nav></div>}
+        {mobileNav && <div className="fixed inset-0 z-40 bg-foreground/30 lg:hidden" onClick={() => setMobileNav(false)}><nav aria-label="Admin sections" className="h-full w-[min(84vw,320px)] bg-ink p-4 text-background" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-center justify-between"><span className="text-sm font-bold uppercase">Fusion Fabric admin</span><Button variant="ghost" size="icon" aria-label="Close admin menu" onClick={() => setMobileNav(false)}><X /></Button></div>{sections.map((item) => <NavButton key={item.id} item={item} active={section === item.id} onClick={() => chooseSection(item.id)} dark />)}<Link to="/" className="mt-6 block px-3 py-3 text-xs uppercase">Back to store</Link></nav></div>}
         <main className="mx-auto max-w-[1500px] px-4 py-6 md:px-8 md:py-8">
           {section === "overview" && <OverviewSection data={overview.data} loading={overview.isLoading} error={overview.error} onNavigate={chooseSection} />}
           {section === "products" && <ProductsSection rows={products.data ?? []} categories={categories.data ?? []} loading={products.isLoading} error={products.error} draft={productDraft} setDraft={setProductDraft} refresh={() => refresh("products", "overview")} />}
@@ -157,7 +157,7 @@ function Metric({ title, value, detail, icon: Icon }: { title: string; value: Re
 function OverviewSection({ data, loading, error, onNavigate }: { data?: Awaited<ReturnType<typeof getAdminOverview>> | undefined; loading: boolean; error: Error | null; onNavigate: (section: Section) => void }) {
   const analytics = data?.analytics as Record<string, unknown> | null | undefined;
   return <>
-    <PageIntro eyebrow="Avenuenest Clothing" title="Store overview" action={<Button variant="outline" onClick={() => onNavigate("orders")}><ShoppingCart /> Review orders</Button>} />
+    <PageIntro eyebrow="Fusion Fabric" title="Store overview" action={<Button variant="outline" onClick={() => onNavigate("orders")}><ShoppingCart /> Review orders</Button>} />
     {loading ? <LoadingLine /> : error ? <ErrorLine message={error.message} /> : <>
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4 xl:gap-4">
         <Metric title="All orders" value={String(analytics?.["order_count"] ?? 0)} detail={`${analytics?.["pending_orders"] ?? 0} awaiting action`} icon={ShoppingCart} />

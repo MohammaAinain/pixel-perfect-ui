@@ -4,13 +4,13 @@ import { Layout } from "@/components/site/Layout";
 export const Route = createFileRoute("/policies")({
   head: () => ({
     meta: [
-      { title: "Shipping, Returns & Privacy — Avenuenest Clothing" },
+      { title: "Shipping, Returns & Privacy — Fusion Fabric" },
       {
         name: "description",
         content:
-          "Avenuenest Clothing shipping charges, delivery times, the 7-day return window, cash-on-delivery terms and how we handle your data.",
+          "Fusion Fabric shipping charges, delivery times, the 7-day return window, cash-on-delivery terms and how we handle your data.",
       },
-      { property: "og:title", content: "Shipping, Returns & Privacy — Avenuenest Clothing" },
+      { property: "og:title", content: "Shipping, Returns & Privacy — Fusion Fabric" },
       {
         property: "og:description",
         content: "Shipping rates, returns, cash-on-delivery terms and privacy.",

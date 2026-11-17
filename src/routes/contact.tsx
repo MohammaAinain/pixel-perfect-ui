@@ -5,14 +5,14 @@ import { Layout } from "@/components/site/Layout";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Avenuenest Clothing" },
+      { title: "Contact Fusion Fabric" },
       {
         name: "description",
         content:
-          "Questions about sizing, an order or a return? Send Avenuenest Clothing a message and we'll reply within one working day.",
+          "Questions about sizing, an order or a return? Contact Fusion Fabric on WhatsApp or Instagram.",
       },
-      { property: "og:title", content: "Contact Avenuenest Clothing" },
-      { property: "og:description", content: "Reach us about sizing, orders and returns." },
+      { property: "og:title", content: "Contact Fusion Fabric" },
+      { property: "og:description", content: "Reach Fusion Fabric on WhatsApp or Instagram about sizing, orders and returns." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -28,16 +28,23 @@ function Contact() {
           <p className="eyebrow">Get in touch</p>
           <h1 className="mt-4 text-4xl md:text-5xl">Talk to us</h1>
           <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
-            Sizing advice, order updates, returns — we answer everything within one working day.
+            Sizing advice, order updates and returns — message us on WhatsApp or Instagram.
           </p>
           <dl className="mt-10 space-y-5 text-sm">
             <div>
               <dt className="eyebrow">Support hours</dt>
-              <dd className="mt-1">Monday to Saturday, 10:00 – 19:00 IST</dd>
+              <dd className="mt-1">WhatsApp: <a className="underline" href="https://wa.me/917024293444" target="_blank" rel="noreferrer">+91 70242 93444</a></dd>
             </div>
             <div>
               <dt className="eyebrow">Orders</dt>
-              <dd className="mt-1">Quote your order number for the fastest reply.</dd>
+              <dd className="mt-1">Quote your order number for the fastest reply on either Instagram account.</dd>
+            </div>
+            <div>
+              <dt className="eyebrow">Instagram</dt>
+              <dd className="mt-1 flex flex-col items-start gap-2">
+                <a className="underline" href="https://www.instagram.com/fusionfabric_clothing/" target="_blank" rel="noreferrer">@fusionfabric_clothing</a>
+                <a className="underline" href="https://www.instagram.com/fusion_fabric_/" target="_blank" rel="noreferrer">@fusion_fabric_</a>
+              </dd>
             </div>
           </dl>
         </div>

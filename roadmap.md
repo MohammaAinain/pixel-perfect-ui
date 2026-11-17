@@ -4,6 +4,7 @@
 - [x] Rename existing brand presentation to Avenuenest Clothing without changing customer checkout/order behavior.
 - [x] Build responsive, functional admin overview and management areas backed by authorized Supabase data.
 - [x] Complete the remaining brand, storefront data, responsive, permission, storage and build verification in this pass.
+- [x] Rename all customer-facing branding to Fusion Fabric and add the provided WhatsApp and Instagram contacts.
 
 ## Verification notes
 - Build and typecheck pass after fixing the admin.tsx JSX syntax error (stray closing brace).

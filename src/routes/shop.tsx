@@ -39,13 +39,13 @@ export const Route = createFileRoute("/shop")({
   }),
   head: () => ({
     meta: [
-      { title: "Shop All Menswear — Avenuenest Clothing" },
+      { title: "Shop All Menswear — Fusion Fabric" },
       {
         name: "description",
         content:
-          "Browse every Avenuenest Clothing piece: shirts, t-shirts, oversized t-shirts, pants and jeans. Filter by category, search and sort by price.",
+          "Browse every Fusion Fabric piece: shirts, t-shirts, oversized t-shirts, pants and jeans. Filter by category, search and sort by price.",
       },
-      { property: "og:title", content: "Shop All Menswear — Avenuenest Clothing" },
+      { property: "og:title", content: "Shop All Menswear — Fusion Fabric" },
       {
         property: "og:description",
         content: "Shirts, tees, oversized tees, pants and jeans in a strict monochrome palette.",
